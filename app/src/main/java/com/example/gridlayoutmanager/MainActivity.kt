@@ -2,9 +2,12 @@ package com.example.gridlayoutmanager
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.gridlayoutmanager.data.DataProvider
 import com.example.gridlayoutmanager.databinding.ActivityMainBinding
+import com.example.gridlayoutmanager.gridlayout.CustomGridLayoutManager
+
+private const val ROWS_NUMBER = 2
+private const val COLUMNS_NUMBER = 5
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initList() {
         binding.viewItemsList.apply {
-            layoutManager = GridLayoutManager(this@MainActivity, 5, GridLayoutManager.HORIZONTAL, false)
+            layoutManager = CustomGridLayoutManager(this@MainActivity, ROWS_NUMBER, COLUMNS_NUMBER, false)
             adapter = ItemsAdapter().also { it.submitList(DataProvider.buildData()) }
         }
     }
