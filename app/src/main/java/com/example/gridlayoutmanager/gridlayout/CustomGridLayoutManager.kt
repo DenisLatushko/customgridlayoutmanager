@@ -108,7 +108,6 @@ class CustomGridLayoutManager(
                 moveAnchorPosition(ScrollDirection.LEFT)
                 fill(recycler)
             } else if (!isLastColumnVisible) {
-                moveAnchorPosition(ScrollDirection.NONE)
                 fill(recycler)
             }
         } else {
@@ -116,7 +115,6 @@ class CustomGridLayoutManager(
                 moveAnchorPosition(ScrollDirection.RIGHT)
                 fill(recycler)
             } else if (!isFirstColumnVisible) {
-                moveAnchorPosition(ScrollDirection.NONE)
                 fill(recycler)
             }
         }
