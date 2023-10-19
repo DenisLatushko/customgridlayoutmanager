@@ -16,8 +16,11 @@ A main class property is **anchorPosition**. It is a position of a first top lef
 
 The main functions for displaying the grid is **fill** and **fillVisibleGrid**.
 
-# fill(recycler: Recycler)
+## fill(recycler: Recycler)
 The method which collects all existing Views and detach them from RecyclerView. Then  **fillVisibleGrid** called which attach necessary view or creates new one and it ro RecyclerView. At the end not used views are removed from the list
 
-# fillVisibleGrid(recycler: Recycler, viewCache: SparseArray<View>)
+## fillVisibleGrid(recycler: Recycler, viewCache: SparseArray<View>)
 Starting from the **anchorePosition** we need to decide if the detached view can be attached again or we need to create a new view and add it to the list. If the view is concidered not to be on the screen then it stays in the cache which will be cleared after.
+
+## smoothScrollToPosition(recyclerView: RecyclerView, state: State, position: Int)
+Overriden **smoothScrollToPosition** provides a custom SmoothScroller implementation to define an offset to be scrolled
