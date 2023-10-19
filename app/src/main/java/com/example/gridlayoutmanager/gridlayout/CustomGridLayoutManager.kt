@@ -19,9 +19,9 @@ import kotlin.math.min
 class CustomGridLayoutManager(
     context: Context,
     private val rowNumber: Int,
-    private val colNumber: Int,
+    override val colNumber: Int,
     reverseLayout: Boolean
-) : LinearLayoutManager(context, HORIZONTAL, reverseLayout) {
+) : LinearLayoutManager(context, HORIZONTAL, reverseLayout), CustomGridLayoutSnapDataProvider {
 
     private val maxItemsPerPage: Int = colNumber * rowNumber
 
@@ -37,13 +37,29 @@ class CustomGridLayoutManager(
     private val verticalViewPort: Int
         get() = height - paddingTop - paddingBottom
 
-    private val columnItemWidth: Int
+    override val columnItemWidth: Int
         get() = horizontalViewPort / colNumber
 
     private val rowItemHeight: Int
         get() = verticalViewPort / rowNumber
 
     private var anchorPosition: Int = 0
+
+    override val currentPageNumber: Int
+        get() = anchorPosition / maxItemsPerPage + 1
+
+    override fun getNextPageFirstPosition(isNext: Boolean): Int {
+        return if (isNext && currentPageNumber < (itemCount / maxItemsPerPage) + 1) {
+            (currentPageNumber - 1) * maxItemsPerPage
+        } else if (!isNext && currentPageNumber > 1) {
+            (currentPageNumber - 1) * maxItemsPerPage
+        } else {
+            anchorPosition
+        }
+    }
+
+    override fun getPageNumberForView(targetView: View): Int =
+        getPosition(targetView) / maxItemsPerPage + 1
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams =
         RecyclerView.LayoutParams(

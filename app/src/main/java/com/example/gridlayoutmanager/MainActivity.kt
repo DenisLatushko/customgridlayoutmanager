@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.gridlayoutmanager.data.DataProvider
 import com.example.gridlayoutmanager.databinding.ActivityMainBinding
 import com.example.gridlayoutmanager.gridlayout.CustomGridLayoutManager
+import com.example.gridlayoutmanager.gridlayout.PageSnapHelper
 
 private const val ROWS_NUMBER = 2
 private const val COLUMNS_NUMBER = 5
@@ -25,13 +26,18 @@ class MainActivity : AppCompatActivity() {
         with(binding) {
             viewSmoothScrollButton.apply {
                 text = getString(R.string.scroll_to_text, SMOOTH_SCROLL_TO + 1)
-                setOnClickListener { viewItemsList.smoothScrollToPosition(SMOOTH_SCROLL_TO) }
+                setOnClickListener {
+                    viewItemsList.scrollToPosition(SMOOTH_SCROLL_TO)
+//                    viewItemsList.smoothScrollToPosition(SMOOTH_SCROLL_TO)
+                }
             }
 
             viewItemsList.apply {
                 layoutManager = CustomGridLayoutManager(this@MainActivity, ROWS_NUMBER, COLUMNS_NUMBER, false)
                 adapter = ItemsAdapter().also { it.submitList(DataProvider.buildData()) }
             }
+
+            PageSnapHelper().attachToRecyclerView(viewItemsList)
         }
     }
 }
