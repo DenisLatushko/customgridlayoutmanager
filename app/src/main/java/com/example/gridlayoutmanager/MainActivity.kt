@@ -8,6 +8,7 @@ import com.example.gridlayoutmanager.gridlayout.CustomGridLayoutManager
 
 private const val ROWS_NUMBER = 2
 private const val COLUMNS_NUMBER = 5
+private const val SMOOTH_SCROLL_TO = 16
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,13 +18,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        initList()
+        initViews()
     }
 
-    private fun initList() {
-        binding.viewItemsList.apply {
-            layoutManager = CustomGridLayoutManager(this@MainActivity, ROWS_NUMBER, COLUMNS_NUMBER, false)
-            adapter = ItemsAdapter().also { it.submitList(DataProvider.buildData()) }
+    private fun initViews() {
+        with(binding) {
+            viewSmoothScrollButton.apply {
+                text = getString(R.string.scroll_to_text, SMOOTH_SCROLL_TO + 1)
+                setOnClickListener { viewItemsList.smoothScrollToPosition(SMOOTH_SCROLL_TO) }
+            }
+
+            viewItemsList.apply {
+                layoutManager = CustomGridLayoutManager(this@MainActivity, ROWS_NUMBER, COLUMNS_NUMBER, false)
+                adapter = ItemsAdapter().also { it.submitList(DataProvider.buildData()) }
+            }
         }
     }
 }
