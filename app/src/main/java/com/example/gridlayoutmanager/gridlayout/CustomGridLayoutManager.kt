@@ -119,7 +119,7 @@ class CustomGridLayoutManager(
             }
         }
 
-        return offset
+        return -offset
     }
 
     private fun moveAnchorPosition(direction: ScrollDirection) {
