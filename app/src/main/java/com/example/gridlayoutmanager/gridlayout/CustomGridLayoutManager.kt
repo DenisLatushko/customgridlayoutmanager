@@ -1,12 +1,14 @@
 package com.example.gridlayoutmanager.gridlayout
 
 import android.content.Context
+import android.graphics.PointF
 import android.util.AttributeSet
 import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.util.forEach
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Recycler
 import androidx.recyclerview.widget.RecyclerView.State
@@ -80,7 +82,7 @@ class CustomGridLayoutManager(
 
     override fun onLayoutChildren(recycler: Recycler, state: State) {
         detachAndScrapAttachedViews(recycler)
-        fill(recycler, ScrollDirection.NONE)
+        fill(recycler)
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: Recycler, state: State): Int {
@@ -104,18 +106,18 @@ class CustomGridLayoutManager(
         if (isScrollingLeft) {
             if (getDecoratedRight(topLeftView) < 0 && !isLastColumnVisible) {
                 moveAnchorPosition(ScrollDirection.LEFT)
-                fill(recycler, ScrollDirection.LEFT)
+                fill(recycler)
             } else if (!isLastColumnVisible) {
                 moveAnchorPosition(ScrollDirection.NONE)
-                fill(recycler, ScrollDirection.NONE)
+                fill(recycler)
             }
         } else {
             if (getDecoratedLeft(topRightView) > 0 && !isFirstColumnVisible) {
                 moveAnchorPosition(ScrollDirection.RIGHT)
-                fill(recycler, ScrollDirection.RIGHT)
+                fill(recycler)
             } else if (!isFirstColumnVisible) {
                 moveAnchorPosition(ScrollDirection.NONE)
-                fill(recycler, ScrollDirection.NONE)
+                fill(recycler)
             }
         }
 
@@ -165,7 +167,7 @@ class CustomGridLayoutManager(
 
     private fun isLastColumnVisible(): Boolean = ((anchorPosition % allColumnsNumber) + colNumber) >= allColumnsNumber
 
-    private fun fill(recycler: Recycler, scrollDirection: ScrollDirection) {
+    private fun fill(recycler: Recycler) {
         if (itemCount <= 0) return
 
         val viewCache = cacheExistingViews()
@@ -246,6 +248,25 @@ class CustomGridLayoutManager(
     override fun canScrollVertically(): Boolean = false
 
     override fun canScrollHorizontally(): Boolean = true
+
+    override fun smoothScrollToPosition(recyclerView: RecyclerView, state: State, position: Int) {
+        val scroller = object: LinearSmoothScroller(recyclerView.context) {
+            override fun computeScrollVectorForPosition(targetPosition: Int): PointF {
+                val targetPageNumber = targetPosition / maxItemsPerPage
+                val tempTargetIndex = targetPosition % maxItemsPerPage
+                val colInd = targetPageNumber * colNumber + if (tempTargetIndex < colNumber) tempTargetIndex else tempTargetIndex - colNumber
+
+                val pageNumber = anchorPosition / maxItemsPerPage
+                val tempAnchorIndex = anchorPosition % maxItemsPerPage
+                val anchorColInd = pageNumber * colNumber + if (tempAnchorIndex < colNumber) tempAnchorIndex else tempAnchorIndex - colNumber
+
+                return PointF((colInd - anchorColInd).toFloat() * columnItemWidth, 0f)
+            }
+        }
+
+        scroller.targetPosition = position
+        startSmoothScroll(scroller)
+    }
 }
 
 private enum class ScrollDirection {
